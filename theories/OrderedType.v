@@ -495,7 +495,13 @@ Proof.
   intuition.
 Qed.
 
-Hint Resolve proper_eq_fun_eq proper_eq_fun_eq'.
+Instance id_proper X `{OrderedType X}
+  : Proper (_eq ==> _eq) (fun x : X => x).
+Proof.
+  firstorder.
+Qed.
+
+Hint Resolve proper_eq_fun_eq proper_eq_fun_eq' id_proper.
 
 (** * Facts about setoid list membership
 

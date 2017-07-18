@@ -219,6 +219,19 @@ Proof.
   apply (eq_lt (x:=y)); try symmetry; auto.
   apply (eq_gt (x:=y0)); try symmetry; auto.
 Qed.
+
+Instance lt_m' `{OrderedType A} : Proper (Equivalence.equiv ==> Equivalence.equiv ==> iff) _lt.
+Proof.
+  eapply lt_m.
+Qed.
+
+Instance lt_StrictOrder_m `{OrderedType A} : Proper (_eq ==> _eq ==> iff) lt_StrictOrder.
+Proof.
+  eapply lt_m.
+Qed.
+
+Hint Resolve lt_m lt_m' lt_StrictOrder_m.
+
 Instance le_m `{OrderedType A} : Proper (_eq ==> _eq ==> iff) (complement _lt).
 Proof.
   repeat intro; split; intro Hlt; unfold complement in  *.
@@ -421,19 +434,19 @@ Ltac order :=
  eauto.
 
 Ltac false_order := elimtype False; order.
-(*
+
 Hint Extern 0 (_eq _ _) => reflexivity.
 Hint Extern 0 (_ === _) => reflexivity.
 Hint Extern 2 (_eq _ _) => symmetry; assumption.
 Hint Extern 2 (_ === _) => symmetry; assumption.
-Hint Extern 1 (Equivalence _) => constructor; congruence.
+(* Hint Extern 1 (Equivalence _) => constructor; congruence.*)
 Hint Extern 1 (Equivalence _) => apply OT_Equivalence.
 Hint Extern 1 (StrictOrder _) => apply OT_StrictOrder.
 Hint Extern 1 (RelationClasses.StrictOrder _) =>
-  constructor; repeat intro; order.
-Hint Extern 1 (Proper _ _) => apply lt_m.
-Hint Extern 1 (Proper _ _) => repeat intro; intuition order.
-*)
+constructor; repeat intro; order.
+
+Hint Resolve eq_equivalence.
+
 (** ** Specific Ordered types : [OrderedType] with specific equality
 
    Sometimes, one wants to consider ordered types where the equality
@@ -470,36 +483,19 @@ Defined.
 Notation "'UsualOrderedType' A" :=
   (SpecificOrderedType A (@eq A))(at level 30).
 
-
-Instance Proper_eq_fun (X:Type) (H0:UsualOrderedType X) (f:X->X)
-:  @Proper (X -> X)
-           (@respectful X X
-                        (@_eq X (@SOT_as_OT X (@eq X) H0))
-                        (@_eq X (@SOT_as_OT X (@eq X) H0))) f.
+Instance proper_eq_fun_eq X Y (f:X->Y) H
+  : Proper ((@_eq X (@SOT_as_OT X (@eq X) H)) ==> eq) f.
 Proof.
   intuition.
 Qed.
 
-Lemma proper_eq_fun_eq X Y (f:X->Y) H
-  : Proper ((@_eq X (@SOT_as_OT X (@eq X) H)) ==> eq) f.
+Instance proper_eq_fun_eq' X Y (f:X->Y) H H'
+  : Proper ((@_eq X (@SOT_as_OT X (@eq X) H)) ==> (@_eq Y (@SOT_as_OT Y (@eq Y) H'))) f.
+Proof.
   intuition.
 Qed.
 
-
-Hint Extern 5 (_eq _ _) => reflexivity.
-Hint Extern 5 (_ === _) => reflexivity.
-Hint Extern 10 (_eq _ _) => symmetry; assumption.
-Hint Extern 10 (_ === _) => symmetry; assumption.
-Hint Extern 11 (Equivalence _) => constructor; congruence.
-Hint Extern 11 (Equivalence _) => apply OT_Equivalence.
-Hint Extern 11 (StrictOrder _) => apply OT_StrictOrder.
-Hint Extern 11 (RelationClasses.StrictOrder _) =>
-constructor; repeat intro; order.
-Hint Extern 9 (Proper _ _) =>
-first [ eassumption | apply lt_m
-        | apply Proper_eq_fun | apply proper_eq_fun_eq
-        | repeat intro; intuition order ].
-
+Hint Resolve proper_eq_fun_eq proper_eq_fun_eq'.
 
 (** * Facts about setoid list membership
 
@@ -578,14 +574,11 @@ Section KeyOrderedType.
 
   Local Instance eqk_Equiv : Equivalence eqk.
   Proof.
-    constructor; repeat intro; unfold eqk in *; eauto.
-    transitivity (fst y); auto.
+    constructor; repeat intro; unfold eqk in *; eauto. order.
   Qed.
   Local Instance eqke_Equiv : Equivalence eqke.
   Proof.
-    constructor; repeat intro; unfold eqke in *; intuition.
-    transitivity (fst y); auto.
-    congruence.
+    constructor; repeat intro; unfold eqke in *; intuition; order.
   Qed.
   Local Instance ltk_SO : RelationClasses.StrictOrder ltk.
   Proof.
@@ -634,8 +627,7 @@ Section KeyOrderedType.
 
   Lemma eqke_trans : forall e e' e'', eqke e e' -> eqke e' e'' -> eqke e e''.
   Proof.
-    unfold eqke; intuition; [ eauto | congruence ].
-    transitivity (fst (a0, b0)); auto.
+    unfold eqke; intuition; [ order | congruence ].
   Qed.
 
   Lemma ltk_trans : forall e e' e'', ltk e e' -> ltk e' e'' -> ltk e e''.
@@ -645,7 +637,7 @@ Section KeyOrderedType.
 
   Lemma ltk_not_eqk : forall e e', ltk e e' -> ~ eqk e e'.
   Proof.
-    unfold eqk, ltk; auto; intros; apply lt_not_eq; auto.
+    unfold eqk, ltk; auto; intros; eapply lt_not_eq; eauto.
   Qed.
 
   Lemma ltk_not_eqke : forall e e', ltk e e' -> ~eqke e e'.

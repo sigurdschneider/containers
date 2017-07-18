@@ -533,7 +533,8 @@ Section WeakFacts.
       intros. rewrite eq_option_alt. intro e.
       rewrite <- find_mapsto_iff, elements_mapsto_iff.
       rewrite findA_rew; apply findA_NoDupA.
-      order. apply elements_3w.
+      eapply OT_Equivalence.
+      apply elements_3w.
     Qed.
 
     Lemma elements_b : forall m x,

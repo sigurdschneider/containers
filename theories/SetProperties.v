@@ -487,8 +487,8 @@ Section Fold.
       the recursive structure of a set. It is now lemmas [fold_1] and
       [fold_2]. *)
   Lemma fold_1 :
-   forall s (A : Type) {eqA : A -> A -> Prop}
-     `{st : Equivalence A eqA} (i : A) (f : elt -> A -> A),
+   forall {A : Type} {eqA : A -> A -> Prop}
+     `{st : Equivalence A eqA} s (i : A) (f : elt -> A -> A),
    Empty s -> eqA (fold f s i) i.
   Proof.
     unfold Empty; intros; destruct (fold_0 s i f) as (l,(H1, (H2, H3))).
@@ -500,8 +500,8 @@ Section Fold.
   Qed.
 
   Lemma fold_2 :
-   forall s s' x (A : Type) {eqA : A -> A -> Prop}
-     `{st : Equivalence A eqA} (i : A) (f : elt -> A -> A)
+   forall {A : Type} {eqA : A -> A -> Prop}
+     `{st : Equivalence A eqA} s s' x (i : A) (f : elt -> A -> A)
      `{Proper _ (_eq ==> eqA ==> eqA) f},
    transpose eqA f ->
    ~ In x s -> Add x s s' -> eqA (fold f s' i) (f x (fold f s i)).
@@ -672,6 +672,9 @@ Section Fold.
     intros. apply fold_rel with (R:=fun u v => u = v + p); simpl; auto.
   Qed.
 End Fold.
+
+
+
 
 (** * Cardinal *)
 

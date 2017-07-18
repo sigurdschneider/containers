@@ -1,3 +1,4 @@
+Require Import FunInd.
 Require MapList Bool OrderedTypeEx.
 Require Import MapInterface ZArith.
 

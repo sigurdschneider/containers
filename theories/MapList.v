@@ -1,3 +1,4 @@
+Require Import FunInd.
 Require Export OrderedType.
 Require Import SetoidList.
 Require OrderedTypeEx.

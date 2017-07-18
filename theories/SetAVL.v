@@ -1,3 +1,4 @@
+Require Import FunInd.
 Require Import OrderedTypeEx.
 Require Import SetInterface ZArith Program.Basics.
 Require Bool.

@@ -18,3 +18,4 @@ Makefile.coq
 *.aux
 *.d.byte
 *.bak
+Makefile.coq.conf

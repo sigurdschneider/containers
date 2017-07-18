@@ -2291,9 +2291,9 @@ Section AdditionalMorphisms.
       [contradiction Hnotin | contradiction Hnotin0]; eexists; eauto.
     inversion H; subst; split; intros [v' [Hvv' Hv'm]]; exists v'.
     rewrite Hvv'; split; auto.
-    rewrite <- (MapsTo_fun Hin) in *; auto.
+    rewrite <- (MapsTo_fun Hin Hv'm) in *; auto.
     rewrite Hvv'; split; auto.
-    rewrite <- (MapsTo_fun Hin0) in *; auto.
+    rewrite <- (MapsTo_fun Hin0 Hv'm) in *; auto.
     clear Hm; revert Hm'; intro Hm.
     assert (Cut :
       forall k v,
@@ -2318,7 +2318,7 @@ Section AdditionalMorphisms.
     inversion_clear Hsort; inversion_clear Hsort'.
     assert (cutsort : forall l (x a : key * elt), sort lt_key l ->
       lelistA lt_key a l -> InA eq_key_elt x l -> lt_key a x).
-    apply SortA_InfA_InA; try solve [intuition].
+    apply SortA_InfA_InA.
     apply eqke_Equiv.
     constructor; repeat intro; unfold lt_key, KeyOrderedType.ltk in *; order.
     intros x y E.

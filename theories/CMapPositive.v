@@ -1560,4 +1560,3 @@ Module CPositiveMapAdditionalFacts.
 Qed.
 
 End CPositiveMapAdditionalFacts.
-

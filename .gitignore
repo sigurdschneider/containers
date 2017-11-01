@@ -20,3 +20,5 @@ Makefile.coq
 *.bak
 Makefile.coq.conf
 .merlin
+*.cmt
+*.cmti

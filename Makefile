@@ -5,6 +5,9 @@ clean: Makefile.coq
 	+make -f Makefile.coq clean
 	rm -f Makefile.coq
 
+doc: Makefile.coq
+	make -f Makefile.coq html
+
 Makefile.coq: Make
 	$(COQBIN)coq_makefile -f _CoqProject -o Makefile.coq
 
